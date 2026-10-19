@@ -74,6 +74,7 @@ export function LogoChooser({ language = 'de' }: { language?: 'de' | 'en' }) {
 
   useEffect(() => {
     if (!open) return;
+    container.current?.querySelector<HTMLButtonElement>('.logo-option[aria-pressed="true"]')?.focus({ preventScroll: true });
     const outside = (event: PointerEvent) => { if (!container.current?.contains(event.target as Node)) setOpen(false); };
     const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(false); trigger.current?.focus(); } };
     document.addEventListener('pointerdown', outside);
