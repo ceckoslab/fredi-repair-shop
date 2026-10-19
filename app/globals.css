@@ -6,3 +6,5 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 @media(max-width:600px){.brands{column-gap:18px}.brand.apple,.brand.lenovo{font-size:19px}.brand.samsung{font-size:13px}.brand.dell{font-size:20px}.brands>div{display:block}.brands>div br{display:inline}.brands>div br::after{content:' '}.form-row:has(input[type=email]){grid-template-columns:1fr}.service-card h3{overflow-wrap:anywhere}}
 @media(max-width:600px){.hero h1{font-size:clamp(42px,13.3vw,57px)}.hero h1 em{font-size:1.08em}}
+
+.demo-notice{background:#f2f5ea;border-bottom:1px solid #e2e8d7;font-size:12px;color:#425137}.demo-notice .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:13px;padding-bottom:13px}.demo-notice a{display:flex;align-items:center;gap:6px;white-space:nowrap;font-weight:700;text-decoration:underline}@media(max-width:600px){.demo-notice .wrap{align-items:flex-start;flex-direction:column;gap:8px}}

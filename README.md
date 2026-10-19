@@ -1,6 +1,6 @@
 # TelSoft Munich prototype
 
-A bilingual German/English mobile phone and laptop repair concept for Fredi. The site is a publicly accessible feedback prototype, not an operating repair business. Please use test data only. It includes an AI-edited portrait supplied by the user, clearly marked sample contact content, appointment requests, private ticket tracking, and a protected service dashboard.
+A bilingual German/English mobile phone and laptop repair concept for Fredi. The site is a publicly accessible feedback prototype, not an operating repair business. Please use test data only. It includes an AI-edited portrait supplied by the user, clearly marked sample contact content, a browser-local booking demonstration, ticket tracking, and an open admin demo.
 
 ## Sharing and repository
 
@@ -8,55 +8,34 @@ Public prototype: https://telsoft-muenchen-fredi.ceckoslab.chatgpt.site
 
 GitHub: https://github.com/ceckoslab/fredi-repair-shop — branch `main`. The app is at the repository root; no `telsoft/` base directory is needed when cloning this repository.
 
-The homepage is public for feedback. The service dashboard still requires an authorised account. Search indexing remains disabled. Real contact details, reviews, prices, customer operations, and complete business-specific legal information are not configured.
+The homepage is public for feedback. The admin demo is open and uses only the visitor’s local demo data. Search indexing remains disabled. Real contact details, reviews, prices, customer operations, and complete business-specific legal information are not configured.
 
-## Netlify deployment
+## Netlify feedback preview
 
-The repository now builds with standard Next.js. Netlify uses `npm run build`, publish directory `.next`, Node 22, repository root as base, and branch `main`. Its automatic Next.js adapter runs the App Router API routes as server functions. `netlify.toml` records these settings.
+This is a static, interactive demo. No backend, accounts, credentials, environment variables, or shared customer database are required. Netlify builds `main` automatically using `npm run build`, publish directory `out`, and Node 22. The repository root is the base directory.
 
-The previous Sites preview remains at the URL above with its original independent test database. Historical Sites/Cloudflare source is preserved in commit `4e9c891`. Its demo records have not been copied to Netlify.
+- German/English landing page, services, mobile repair concept, and Fredi’s illustrative photo.
+- Booking saves a fictional request to **this visitor’s browser only** and returns a demo ticket.
+- Tracking finds that ticket in the same browser.
+- `/werkstatt/` is an open admin demo. It lists the visitor’s local requests plus one example and lets them change repair status and notes.
+- A status change appears when the ticket is looked up again. Refreshing retains the demo; other browsers and devices have separate data.
+- No messages, emails, payments, appointments, or customer requests are sent. Please use test details only. Clear the site’s browser data to reset the demo.
+- No customer form payloads are transmitted to Netlify. Netlify serves the static files and processes normal technical access logs.
 
-## Platform and security
+The earlier Sites preview is separate and unchanged. A full Netlify backend was prepared in commit `7d60728`, but is intentionally not used for this simple feedback preview. Before real customer operations, implement and review authentication, shared persistent storage, retention, legal content, and appointment/email workflows.
 
-- React, TypeScript and Next.js App Router. German/English design and customer flows are preserved.
-- Netlify Blobs, using strong consistency and site-wide stores in `eu-central-1`. Production bookings survive redeployments. Preview deploys use separate namespaces.
-- Atomic create-only writes make booking retries idempotent. Reusing a request ID with different data is rejected. Staff updates use ETag conditions and the last seen timestamp to reject stale edits.
-- Staff login at `/werkstatt` uses a random private password, an scrypt hash, signed HttpOnly/Secure/SameSite cookies, and an eight-hour expiry. Rotating either credential invalidates existing sessions. The app no longer trusts Sites identity headers.
-- Runtime environment variables: `ADMIN_PASSWORD_HASH` and `ADMIN_SESSION_SECRET`. Never prefix these with `NEXT_PUBLIC_`. Missing configuration denies staff access.
-- Server-side validation, same-origin writes, persistent rate limits and 96-bit random ticket codes. Tracking never returns names, emails, phone numbers, postcodes or request IDs.
-- Netlify supplies the client IP header used for throttling; only its hash is stored. Counters reset per window. A retention policy for old counter keys and bookings remains a launch requirement.
-- No payment processing, email delivery, real calendar reservation, external analytics or invented customer reviews. Appointment submissions are requests requiring manual confirmation.
-- Shared staff password suits this feedback prototype; per-person accounts and an audit trail are launch requirements.
-
-### Staff credentials
-
-`npm run admin:credentials` creates a new random password and signing secret without printing them. It writes private, Git-ignored `.local/staff-access.txt` and `.local/netlify.env` files and refuses to overwrite them. Import the two values into the Netlify project's environment, then redeploy. Share the password privately; never include it in public feedback links. Keep the environment file out of Git and out of public assets.
-
-## Product behaviour
-
-`POST /api/bookings` validates device, service, preferred date/time, postcode and contact fields, persists a request and returns its private ticket. Identical retries return the original ticket.
-
-`POST /api/track` accepts a ticket and returns only device, appointment and status information. Customer-visible notes must not contain passwords or sensitive personal details.
-
-`GET /api/workshop` and `PATCH /api/workshop` require a verified staff session. The dashboard shows the latest 200 requests and updates status and notes. Its prototype implementation scans records before selecting the latest 200; move to indexed SQL queries/pagination when the volume grows.
-
-States: requested → scheduled → received → diagnosed → waiting / repairing → ready → collected, with cancellation available separately. On-site repairs can skip handover stages.
-
-## Local development and checks
+## Development
 
 ```sh
 npm ci
-npm run admin:credentials # once, if local staff access is needed
-npm run dev -- --port 3000
+npm run dev
 npm test
 npm run typecheck
 npm run lint
 npm run build
 ```
 
-The development command starts Netlify's local Blobs emulator and Next.js. It keeps test records under ignored `.local/blobs` and never connects to the production database. `npm start` requires the Netlify runtime context for storage; use `npm run dev` for a standalone local preview.
-
-Backend tests exercise persistent booking retries, conflicting updates, request limiting, and invalid/expired/rotated staff sessions. A live deployment check must additionally verify booking → staff update → public tracking, because local tests cannot prove Netlify runtime configuration.
+The production build exports static files to `out/`. No server functions or private configuration are needed. Do not put secrets in this public demo.
 
 ## Prototype content and launch dependencies
 
@@ -85,11 +64,4 @@ Potential differentiation to test: named technician, German/English service, cle
 
 ## Verification
 
-- TypeScript check and production build.
-- Desktop and mobile visual inspection in German and English.
-- Browser booking → persisted storage record → ticket lookup.
-- Unauthenticated staff reads and updates rejected; invalid bookings rejected.
-- Authenticated dashboard update and subsequent customer lookup.
-- Tracking response checked for absence of contact fields.
-
-Local QA data and preview deploys are separate from production storage. Production email sending and real appointment fulfilment are not configured.
+Build and TypeScript checks, plus a browser-local demo test covering booking, duplicate retries, tracking, and status updates. After deployment, verify the live page and admin demo. The preview never fulfils real appointments.
