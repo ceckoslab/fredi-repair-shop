@@ -1,0 +1,1 @@
+ALTER TABLE `bookings` ADD `postcode` text DEFAULT '' NOT NULL;
