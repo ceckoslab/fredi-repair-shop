@@ -4,7 +4,9 @@ A bilingual German/English mobile phone and laptop repair concept for Fredi. The
 
 ## Sharing and repository
 
-Public prototype: https://telsoft-muenchen-fredi.ceckoslab.chatgpt.site
+Public Netlify preview: https://telsoft-muenchen.netlify.app
+
+Admin demo: https://telsoft-muenchen.netlify.app/werkstatt/
 
 GitHub: https://github.com/ceckoslab/fredi-repair-shop — branch `main`. The app is at the repository root; no `telsoft/` base directory is needed when cloning this repository.
 
@@ -22,7 +24,7 @@ This is a static, interactive demo. No backend, accounts, credentials, environme
 - No messages, emails, payments, appointments, or customer requests are sent. Please use test details only. Clear the site’s browser data to reset the demo.
 - No customer form payloads are transmitted to Netlify. Netlify serves the static files and processes normal technical access logs.
 
-The earlier Sites preview is separate and unchanged. A full Netlify backend was prepared in commit `7d60728`, but is intentionally not used for this simple feedback preview. Before real customer operations, implement and review authentication, shared persistent storage, retention, legal content, and appointment/email workflows.
+The earlier Sites preview at https://telsoft-muenchen-fredi.ceckoslab.chatgpt.site is separate and unchanged. A full Netlify backend was prepared in commit `7d60728`, but is intentionally not used for this simple feedback preview. Before real customer operations, implement and review authentication, shared persistent storage, retention, legal content, and appointment/email workflows.
 
 ## Development
 
