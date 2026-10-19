@@ -1,6 +1,22 @@
 # TelSoft Munich prototype
 
-A bilingual German/English mobile phone and laptop repair concept for Fredi. The site is a private prototype, not an operating repair business. It includes an AI-edited portrait supplied by the user, clearly marked sample contact content, appointment requests, private ticket tracking, and a protected service dashboard.
+A bilingual German/English mobile phone and laptop repair concept for Fredi. The site is a publicly accessible feedback prototype, not an operating repair business. Please use test data only. It includes an AI-edited portrait supplied by the user, clearly marked sample contact content, appointment requests, private ticket tracking, and a protected service dashboard.
+
+## Sharing and repository
+
+Public prototype: https://telsoft-muenchen-fredi.ceckoslab.chatgpt.site
+
+GitHub: https://github.com/ceckoslab/fredi-repair-shop — branch `main`. The app is at the repository root; no `telsoft/` base directory is needed when cloning this repository.
+
+The homepage is public for feedback. The service dashboard still requires an authorised account. Search indexing remains disabled. Real contact details, reviews, prices, customer operations, and complete business-specific legal information are not configured.
+
+### Netlify handoff
+
+Netlify has not been connected or deployed. The current build targets Cloudflare Workers and uses `cloudflare:workers`, D1 bindings, and Sites-managed identity headers. Connecting this repository alone does not move those backend services to Netlify, and `dist/client` alone is not a complete deployment of the application.
+
+For the Netlify step, adapt the server runtime, persistence, and staff authentication together, then verify booking, tracking, and admin permissions. Do not trust client-supplied `oai-authenticated-user-*` headers outside Sites: the current authentication contract depends on Sites validating and injecting them. Preserve the existing public feedback URL until the replacement works end to end.
+
+Runtime secrets, `.dev.vars`, local databases, dependency folders, and build output are excluded from Git. The photo and database migrations are included.
 
 ## Platform decisions
 
