@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { BrandProvider } from '../components/brand-preview';
 export const metadata: Metadata = {
   title: 'TelSoft München | Handy- & Laptop-Reparatur mit Fredi',
   description: 'Ein zweites Leben für dein Gerät. Smartphone- und Laptop-Reparatur in München: Display, Akku, Flüssigkeitsschäden und Datenrettung. Kostenlose Diagnose.',
@@ -7,5 +8,5 @@ export const metadata: Metadata = {
   icons: { icon: '/favicon.svg' },
 };
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
-  return <html lang="de"><body>{children}</body></html>;
+  return <html lang="de"><body><BrandProvider>{children}</BrandProvider></body></html>;
 }
