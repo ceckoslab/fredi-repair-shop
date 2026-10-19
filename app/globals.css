@@ -9,41 +9,12 @@
 
 .demo-notice{background:#f3f5f9;border-bottom:1px solid #dfe5ee;font-size:12px;color:#475e7a}.demo-notice .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:13px;padding-bottom:13px}.demo-notice a{display:flex;align-items:center;gap:6px;white-space:nowrap;font-weight:700;text-decoration:underline}@media(max-width:600px){.demo-notice .wrap{align-items:flex-start;flex-direction:column;gap:8px}}
 
-/* Fredi's logo collection: retain the original artwork and frame its white space. */
+/* Selected identity: concept 08, Pyramid Monogram. */
 .nav{height:104px}
 .brand-logo{display:inline-flex;align-items:center;flex-shrink:0;width:176px;height:86px}
 .brand-art{display:block;position:relative;overflow:hidden;width:176px;height:86px;mix-blend-mode:multiply}
 .brand-art img{position:absolute;left:50%;top:50%;width:100px;height:auto;max-width:none;transform:translate(-50%,-50%)}
-.brand-art-horizontal img{width:176px}
-.footer-main .brand-logo{width:158px}
-.footer-main .brand-art{width:158px}
-.footer-main .brand-art-horizontal img{width:158px}
-.logo-chooser{position:fixed;right:24px;bottom:24px;z-index:25;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
-.logo-chooser-toggle{display:flex;align-items:center;gap:10px;background:var(--navy);color:white;padding:12px 14px;border:1px solid #ffffff30;border-radius:100px;box-shadow:0 5px 24px #142e5026;font-size:12px;font-weight:600;min-height:46px}
-.logo-chooser-toggle:hover{background:var(--navy-deep)}
-.logo-count{background:#ffffff1c;padding:3px 8px;border-radius:20px;font-size:10px;font-variant-numeric:tabular-nums}
-.logo-panel{width:362px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 110px);overflow:auto;overscroll-behavior:contain;padding:20px;background:#faf9f7;border:1px solid #d8e0eb;border-radius:16px;box-shadow:0 12px 60px #142e5026}
-.logo-panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.logo-panel-heading .eyebrow{font-size:8px;letter-spacing:1.4px;color:var(--wine)}
-.logo-panel-heading h2{font-size:19px;line-height:1.3;letter-spacing:-.5px;margin-top:6px}
-.logo-panel-heading .icon-button{padding:3px;margin-right:-3px}
-.logo-selected-preview{display:flex;align-items:center;justify-content:center;margin:14px 0;border-radius:8px;background:white;border:1px solid #e6eaf0;height:138px}
-.logo-selected-preview .brand-art{width:282px;height:128px}
-.logo-selected-preview .brand-art img{width:144px}
-.logo-selected-preview .brand-art-horizontal img{width:282px}
-.logo-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
-.logo-option{background:white;border:1px solid #dce3ed;border-radius:7px;padding:3px 3px 5px;min-width:0;color:var(--navy)}
-.logo-option img{width:100%;height:auto;aspect-ratio:1;object-fit:contain}
-.logo-option>span{display:flex;justify-content:center;align-items:center;gap:3px;font-size:10px;line-height:1.3;min-height:14px}
-.logo-option:hover{border-color:var(--navy)}
-.logo-option[aria-pressed=true]{border-color:var(--wine);box-shadow:0 0 0 1px var(--wine);color:var(--wine);background:#fff9fa}
-.logo-current{font-size:12px;margin-top:15px;color:var(--navy)}
-.logo-save-hint{font-size:10px;line-height:1.6;margin-top:4px}
-.logo-share{display:flex;align-items:center;justify-content:center;gap:9px;background:#edf1f7;color:var(--navy);border:1px solid #dbe3ee;border-radius:7px;width:100%;min-height:39px;padding:9px;font-size:11px;margin-top:14px}
-.logo-share:hover{background:#e3eaf4}
-.logo-share-fallback{font-size:11px}
-.footer-bottom{padding-bottom:88px}
-.workshop{padding-bottom:110px}
-@media(max-width:850px){.nav{height:88px}.mobile-open{top:88px}.brand-logo,.brand-art{width:152px;height:78px}.brand-art img{width:90px}.brand-art-horizontal img{width:152px}}
-@media(max-width:600px){.nav{gap:8px}.brand-logo,.brand-art{width:128px;height:76px}.brand-art img{width:88px}.brand-art-horizontal img{width:128px}.logo-chooser{right:16px;bottom:max(16px,env(safe-area-inset-bottom));gap:10px}.logo-chooser-toggle{padding:10px 12px;font-size:11px}.logo-panel{padding:17px;width:350px}.logo-panel-heading h2{font-size:18px}.logo-selected-preview{height:122px}.logo-selected-preview .brand-art{height:114px}.logo-selected-preview .brand-art img{width:130px}.logo-selected-preview .brand-art-horizontal img{width:260px}.footer-bottom{padding-bottom:86px}}
-@media(max-width:360px){.brand-logo,.brand-art{width:112px}.brand-art-horizontal img{width:112px}.nav-book{font-size:10px;padding:10px;gap:7px}.logo-options{gap:5px}}
+.footer-main .brand-logo,.footer-main .brand-art{width:158px}
+@media(max-width:850px){.nav{height:88px}.mobile-open{top:88px}.brand-logo,.brand-art{width:152px;height:78px}.brand-art img{width:90px}}
+@media(max-width:600px){.nav{gap:8px}.brand-logo,.brand-art{width:128px;height:76px}.brand-art img{width:88px}}
+@media(max-width:360px){.brand-logo,.brand-art{width:112px}.nav-book{font-size:10px;padding:10px;gap:7px}}

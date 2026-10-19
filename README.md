@@ -17,8 +17,8 @@ The homepage is public for feedback. The admin demo is open and uses only the vi
 This is a static, interactive demo. No backend, accounts, credentials, environment variables, or shared customer database are required. Netlify builds `main` automatically using `npm run build`, publish directory `out`, and Node 22. The repository root is the base directory.
 
 - German/English landing page, services, mobile repair concept, and Fredi’s illustrative photo.
-- Ten logo concepts in a compact “Logos testen / Try logos” chooser, with a navy and burgundy theme. The header, footer, and admin page use the selected concept. Choice is stored under `telsoft-logo-concept`; `?logo=01` through `?logo=10` opens a shareable choice. The horizontal concept (10) is the default. No preference is sent to a server.
-- Logo assets are WebP encodings of the original concept PNGs, with unchanged dimensions and artwork; all ten total about 320 KB.
+- Fredi chose concept **08, Pyramid Monogram**, as the permanent logo. The header, footer, admin page, and favicon use it, with the navy and burgundy theme. The chooser has been removed; previous saved choices and `?logo=` links cannot override the selected identity.
+- All ten original PNG concepts, optimized WebP copies, and a browsable gallery are preserved in [`design/logo-concepts`](design/logo-concepts/README.md). The archive is versioned in Git and is not part of the public website build.
 - Booking saves a fictional request to **this visitor’s browser only** and returns a demo ticket.
 - Tracking finds that ticket in the same browser.
 - `/werkstatt/` is an open admin demo. It lists the visitor’s local requests plus one example and lets them change repair status and notes.
