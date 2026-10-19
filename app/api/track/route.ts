@@ -1,6 +1,4 @@
-import { eq } from 'drizzle-orm';
-import { getDb } from '../../../db';
-import { bookings } from '../../../db/schema';
+import { findBooking } from '../../../lib/storage';
 import { json, sameOrigin, readBody, allowRequest } from '../../../lib/server';
 export async function POST(req:Request) {
   if (!sameOrigin(req)) return json({error:'origin'},403);
@@ -8,7 +6,9 @@ export async function POST(req:Request) {
   if (!/^TS-(?:[A-F0-9]{6}-){3}[A-F0-9]{6}$/.test(ticket)) return json({error:'not_found'},404);
   try {
     if (!await allowRequest(req,'track',60,60)) return json({error:'rate'},429);
-    const result=await getDb().select({ticket:bookings.ticket,device:bookings.device,brand:bookings.brand,model:bookings.model,service:bookings.service,status:bookings.status,note:bookings.note,date:bookings.date,time:bookings.time,updatedAt:bookings.updatedAt}).from(bookings).where(eq(bookings.ticket,ticket)).get();
-    return result ? json(result) : json({error:'not_found'},404);
+    const result=await findBooking(ticket);
+    if (!result) return json({error:'not_found'},404);
+    const {device,brand,model,service,status,note,date,time,updatedAt}=result;
+    return json({ticket,device,brand,model,service,status,note,date,time,updatedAt});
   } catch {return json({error:'unavailable'},503);}
 }

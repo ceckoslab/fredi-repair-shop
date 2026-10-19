@@ -1,0 +1,10 @@
+import { randomBytes, scryptSync } from 'node:crypto';
+import { mkdir, writeFile } from 'node:fs/promises';
+await mkdir('.local', {recursive:true, mode:0o700});
+const password = randomBytes(24).toString('base64url');
+const salt = randomBytes(16).toString('hex');
+const hash = salt + ':' + scryptSync(password, salt, 64).toString('hex');
+const secret = randomBytes(32).toString('base64url');
+await writeFile('.local/netlify.env', `ADMIN_PASSWORD_HASH=${hash}\nADMIN_SESSION_SECRET=${secret}\n`, {mode:0o600, flag:'wx'});
+await writeFile('.local/staff-access.txt', `TelSoft prototype staff login\nPath: /werkstatt\nPassword: ${password}\n\nKeep this file private. Rotate both Netlify environment values to revoke access.\n`, {mode:0o600, flag:'wx'});
+console.log('Created private .local/netlify.env and .local/staff-access.txt. Import the environment file into Netlify; never commit either file.');

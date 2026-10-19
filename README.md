@@ -10,45 +10,53 @@ GitHub: https://github.com/ceckoslab/fredi-repair-shop — branch `main`. The ap
 
 The homepage is public for feedback. The service dashboard still requires an authorised account. Search indexing remains disabled. Real contact details, reviews, prices, customer operations, and complete business-specific legal information are not configured.
 
-### Netlify handoff
+## Netlify deployment
 
-Netlify has not been connected or deployed. The current build targets Cloudflare Workers and uses `cloudflare:workers`, D1 bindings, and Sites-managed identity headers. Connecting this repository alone does not move those backend services to Netlify, and `dist/client` alone is not a complete deployment of the application.
+The repository now builds with standard Next.js. Netlify uses `npm run build`, publish directory `.next`, Node 22, repository root as base, and branch `main`. Its automatic Next.js adapter runs the App Router API routes as server functions. `netlify.toml` records these settings.
 
-For the Netlify step, adapt the server runtime, persistence, and staff authentication together, then verify booking, tracking, and admin permissions. Do not trust client-supplied `oai-authenticated-user-*` headers outside Sites: the current authentication contract depends on Sites validating and injecting them. Preserve the existing public feedback URL until the replacement works end to end.
+The previous Sites preview remains at the URL above with its original independent test database. Historical Sites/Cloudflare source is preserved in commit `4e9c891`. Its demo records have not been copied to Netlify.
 
-Runtime secrets, `.dev.vars`, local databases, dependency folders, and build output are excluded from Git. The photo and database migrations are included.
+## Platform and security
 
-## Platform decisions
+- React, TypeScript and Next.js App Router. German/English design and customer flows are preserved.
+- Netlify Blobs, using strong consistency and site-wide stores in `eu-central-1`. Production bookings survive redeployments. Preview deploys use separate namespaces.
+- Atomic create-only writes make booking retries idempotent. Reusing a request ID with different data is rejected. Staff updates use ETag conditions and the last seen timestamp to reject stale edits.
+- Staff login at `/werkstatt` uses a random private password, an scrypt hash, signed HttpOnly/Secure/SameSite cookies, and an eight-hour expiry. Rotating either credential invalidates existing sessions. The app no longer trusts Sites identity headers.
+- Runtime environment variables: `ADMIN_PASSWORD_HASH` and `ADMIN_SESSION_SECRET`. Never prefix these with `NEXT_PUBLIC_`. Missing configuration denies staff access.
+- Server-side validation, same-origin writes, persistent rate limits and 96-bit random ticket codes. Tracking never returns names, emails, phone numbers, postcodes or request IDs.
+- Netlify supplies the client IP header used for throttling; only its hash is stored. Counters reset per window. A retention policy for old counter keys and bookings remains a launch requirement.
+- No payment processing, email delivery, real calendar reservation, external analytics or invented customer reviews. Appointment submissions are requests requiring manual confirmation.
+- Shared staff password suits this feedback prototype; per-person accounts and an audit trail are launch requirements.
 
-- React + TypeScript on the supplied Vinext framework, deployed to Sites / Cloudflare Workers. The framework is used because bookings and updates need server-side processing.
-- Cloudflare D1 + Drizzle migrations persist requests across devices. Browser storage is used only for language preference.
-- German is the default; the language switch updates visible content and the document language and persists locally. A later public SEO release could use separate `/de` and `/en` routes with hreflang.
-- Server-side validation, same-origin writes, hashed request throttling identifiers, parameterised database access, and 96-bit random private ticket codes. Tracking responses omit names, email addresses, phone numbers, and postcodes.
-- The service dashboard at `/werkstatt` uses Sites-managed ChatGPT sign-in plus a server-side `ADMIN_EMAILS` allowlist. Missing configuration denies access. The hosted prototype allows the current Site owner; Fredi can be added after his account is supplied.
-- No payment processing, email delivery, external analytics, review scraping, or calendar reservation is configured. A submitted appointment is a request, not an accepted time slot. The dashboard can mark it confirmed.
-- Local image, CSS, and system fonts avoid extra third-party asset requests. The portrait is illustrative; Fredi does not have the pictured workshop.
+### Staff credentials
+
+`npm run admin:credentials` creates a new random password and signing secret without printing them. It writes private, Git-ignored `.local/staff-access.txt` and `.local/netlify.env` files and refuses to overwrite them. Import the two values into the Netlify project's environment, then redeploy. Share the password privately; never include it in public feedback links. Keep the environment file out of Git and out of public assets.
 
 ## Product behaviour
 
-`POST /api/bookings` validates a device, brand, model, service, preferred date/time, postcode, contact details, and acknowledgement; saves a request; and returns a private ticket. Request UUIDs prevent duplicate retries after a completed save.
+`POST /api/bookings` validates device, service, preferred date/time, postcode and contact fields, persists a request and returns its private ticket. Identical retries return the original ticket.
 
-`POST /api/track` accepts the private ticket and returns device information and status. Do not share ticket codes publicly. Customer-visible notes must not contain passwords or sensitive personal details.
+`POST /api/track` accepts a ticket and returns only device, appointment and status information. Customer-visible notes must not contain passwords or sensitive personal details.
 
-`GET /api/workshop` and `PATCH /api/workshop` require authorised staff identity. The dashboard lists the latest 200 requests and permits updates to status and customer-visible notes. A real launch would need pagination, deletion/retention controls, operational logging, backups, and staff onboarding.
+`GET /api/workshop` and `PATCH /api/workshop` require a verified staff session. The dashboard shows the latest 200 requests and updates status and notes. Its prototype implementation scans records before selecting the latest 200; move to indexed SQL queries/pagination when the volume grows.
 
-States: requested → scheduled → received → diagnosed → waiting / repairing → ready → collected. Cancelled is available separately. Staff choose the actual state; the interface does not impose a rigid sequence because on-site repairs can skip handover stages.
+States: requested → scheduled → received → diagnosed → waiting / repairing → ready → collected, with cancellation available separately. On-site repairs can skip handover stages.
 
-## Local development
-
-Node 22.13+ is required. Use `npm run dev` for local development. Dependencies and builds are managed by the installed Sites plugin; `npm run build` works for standalone builds.
-
-D1 bindings are declared in `.openai/hosting.json`. Generate schema migrations with `npm run db:generate`. After a build, apply each new SQL file once with:
+## Local development and checks
 
 ```sh
-node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/<migration>.sql
+npm ci
+npm run admin:credentials # once, if local staff access is needed
+npm run dev -- --port 3000
+npm test
+npm run typecheck
+npm run lint
+npm run build
 ```
 
-For local admin testing, use ignored `.dev.vars` with `ADMIN_EMAILS="seedy@sites.test"`, then open `/signin-with-chatgpt?return_to=/werkstatt`. The starter's mock authentication is local-development-only. Hosted admin addresses are runtime secrets and are never included in client source.
+The development command starts Netlify's local Blobs emulator and Next.js. It keeps test records under ignored `.local/blobs` and never connects to the production database. `npm start` requires the Netlify runtime context for storage; use `npm run dev` for a standalone local preview.
+
+Backend tests exercise persistent booking retries, conflicting updates, request limiting, and invalid/expired/rotated staff sessions. A live deployment check must additionally verify booking → staff update → public tracking, because local tests cannot prove Netlify runtime configuration.
 
 ## Prototype content and launch dependencies
 
@@ -79,9 +87,9 @@ Potential differentiation to test: named technician, German/English service, cle
 
 - TypeScript check and production build.
 - Desktop and mobile visual inspection in German and English.
-- Browser booking → persisted local D1 record → ticket lookup.
+- Browser booking → persisted storage record → ticket lookup.
 - Unauthenticated staff reads and updates rejected; invalid bookings rejected.
-- Authorised dashboard update and subsequent customer lookup.
+- Authenticated dashboard update and subsequent customer lookup.
 - Tracking response checked for absence of contact fields.
 
-Local QA data is separate from the hosted database. Production email sending and real appointment fulfilment are not configured.
+Local QA data and preview deploys are separate from production storage. Production email sending and real appointment fulfilment are not configured.

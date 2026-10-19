@@ -58,3 +58,7 @@ next-env.d.ts
 # Local runtime secrets and compiler cache
 .dev.vars*
 *.tsbuildinfo
+
+# Netlify state, local QA and staff credentials
+.netlify/
+.local/

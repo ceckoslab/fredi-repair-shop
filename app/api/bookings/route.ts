@@ -1,7 +1,5 @@
 import { z } from 'zod';
-import { eq } from 'drizzle-orm';
-import { getDb } from '../../../db';
-import { bookings } from '../../../db/schema';
+import { createBooking, RetryConflict } from '../../../lib/storage';
 import { json, sameOrigin, readBody, allowRequest, todayMunich } from '../../../lib/server';
 const schema = z.object({
   requestId:z.string().uuid(),name:z.string().trim().min(2).max(100), email:z.string().trim().email().max(160),
@@ -19,15 +17,9 @@ export async function POST(req:Request) {
   if (!validBrands.includes(input.brand) || isNaN(date.getTime()) || date.toISOString().slice(0,10)!==input.date || input.date<todayMunich() || input.date>maxDate) return json({error:'validation'},400);
   try {
     if (!await allowRequest(req,'booking',10,3600)) return json({error:'rate'},429);
-    const db=getDb();
-    const existing=await db.select({ticket:bookings.ticket}).from(bookings).where(eq(bookings.requestId,input.requestId)).get();
-    if(existing) return json(existing);
-    const bytes=crypto.getRandomValues(new Uint8Array(12));
-    const token=Array.from(bytes).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
-    const ticket='TS-'+token.match(/.{6}/g)!.join('-');
-    const now=new Date().toISOString();
     const {consent,website,...data}=input;
-    await db.insert(bookings).values({...data,email:input.email.toLowerCase(),ticket,status:'requested',note:'',createdAt:now,updatedAt:now});
-    return json({ticket},201);
-  } catch { return json({error:'unavailable'},503); }
+    void consent; void website;
+    const result = await createBooking({...data, email:input.email.toLowerCase()});
+    return json({ticket:result.ticket},result.created?201:200);
+  } catch (error) { return error instanceof RetryConflict ? json({error:'conflict'},409) : json({error:'unavailable'},503); }
 }
